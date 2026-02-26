@@ -2,10 +2,16 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/LoginView.vue'),
+    meta: { title: 'Login — FlexGPT' },
+  },
+  {
     path: '/',
-    name: 'Home',
-    component: () => import('../views/HomeView.vue'),
-    meta: { title: 'Home' },
+    name: 'Chat',
+    component: () => import('../views/ChatView.vue'),
+    meta: { title: 'FlexGPT', requiresAuth: true },
   },
 ]
 
@@ -20,6 +26,11 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const hasToken = !!localStorage.getItem('access_token')
   const requiresAuth = to.matched.some((record) => record.meta?.requiresAuth)
+
+  // Set page title
+  if (to.meta?.title) {
+    document.title = to.meta.title as string
+  }
 
   if (requiresAuth && !hasToken) {
     return next({ path: '/login', replace: true })

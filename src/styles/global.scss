@@ -2,26 +2,58 @@
 @use './fonts.module.scss' as *;
 
 html, body {
-  background-color: $white;
+  background-color: $primary-dark;
   margin: 0;
   font-family: $font-principal;
 }
 
 :root {
-  --bg: #{$white};
-  --text: #{$primary-dark};
-  --border: #{rgba($primary-dark, 0.08)};
-  --accent: #{$primary};
-}
-
-[data-theme='dark'] {
   --bg: #{$primary-dark};
   --text: #{$text-light};
   --border: #{rgba($white, 0.12)};
   --accent: #{$primary};
+  --accent-secondary: #{$secondary};
+  --surface: #{$surface};
+  --surface-hover: #{$surface-hover};
+  --surface-active: #{$surface-active};
+  --glass-bg: #{$glass-bg};
+  --glass-border: #{$glass-border};
+
+  // AI Provider CSS vars
+  --claude: #{$claude-color};
+  --gemini: #{$gemini-color};
+  --deepseek: #{$deepseek-color};
+
+  // Sidebar
+  --sidebar-bg: #{rgba($primary-dark, 0.95)};
+  --sidebar-width: 280px;
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+// Selection
+::selection {
+  background: rgba($primary, 0.4);
+  color: $white;
 }

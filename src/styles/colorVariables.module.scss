@@ -8,6 +8,44 @@ $white: #fefefe;
 $text-light: #fefefe;
 $text-secondary: #6b7280;
 
+// AI Provider colors
+$claude-color: #D97757;
+$gemini-color: #4285F4;
+$deepseek-color: #4D6BFE;
+
+// Surface / Glass
+$surface: rgba(255, 255, 255, 0.04);
+$surface-hover: rgba(255, 255, 255, 0.08);
+$surface-active: rgba(255, 255, 255, 0.12);
+$glass-bg: rgba(255, 255, 255, 0.06);
+$glass-border: rgba(255, 255, 255, 0.1);
+
+// Spacing tokens
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+// Border radius
+$radius-sm: 0.375rem;
+$radius-md: 0.75rem;
+$radius-lg: 1rem;
+$radius-xl: 1.5rem;
+$radius-full: 50%;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+$shadow-glow: 0 0 20px rgba($primary, 0.3);
+
+// Transitions
+$transition-fast: 150ms ease;
+$transition-base: 250ms ease;
+$transition-slow: 400ms ease;
+
 // Alert colors
 $alert-warning: #f59e0b;
 $alert-info: #3b82f6;
