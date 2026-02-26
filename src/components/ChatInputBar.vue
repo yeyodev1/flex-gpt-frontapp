@@ -10,7 +10,7 @@ const props = defineProps({
   placeholder: {
     type: String,
     required: false,
-    default: 'Send a message...',
+    default: 'Escribe un mensaje...',
   },
   isCheckingProviders: {
     type: Boolean,
@@ -151,7 +151,7 @@ function handleDrop(e: DragEvent) {
         <button 
           class="input-bar__upload-btn" 
           :disabled="disabled"
-          title="Attach file"
+          title="Adjuntar archivo"
           @click="triggerFileUpload"
         >
           <i class="fa-solid fa-plus"></i>

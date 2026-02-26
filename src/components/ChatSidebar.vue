@@ -36,16 +36,16 @@ function handleDeleteConversation(event: Event, id: string) {
   event.stopPropagation()
 
   uiStore.openModal({
-    title: 'Delete Conversation',
-    message: 'Are you sure you want to delete this conversation? This action cannot be undone.',
-    confirmText: 'Delete',
-    cancelText: 'Cancel',
+    title: 'Eliminar Conversación',
+    message: '¿Estás seguro de que quieres eliminar esta conversación? Esta acción no se puede deshacer.',
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
     onConfirm: async () => {
       try {
         await conversationStore.deleteConversation(id)
-        uiStore.showToast('Conversation deleted successfully', 'success')
+        uiStore.showToast('Conversación eliminada con éxito', 'success')
       } catch (error) {
-        uiStore.showToast('Failed to delete conversation', 'error')
+        uiStore.showToast('Error al eliminar la conversación', 'error')
       }
     }
   })
@@ -83,16 +83,16 @@ function getProviderIcon(provider: string): string {
     <!-- New Chat -->
     <button class="sidebar__new-chat" @click="handleNewChat">
       <i class="fa-solid fa-plus"></i>
-      <span>New Chat</span>
+      <span>Nuevo Chat</span>
     </button>
 
     <!-- Conversations -->
     <div class="sidebar__conversations">
       <p v-if="conversationStore.isLoadingConversations" class="sidebar__loading">
-        <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+        <i class="fa-solid fa-spinner fa-spin"></i> Cargando...
       </p>
       <p v-else-if="!conversationStore.hasConversations" class="sidebar__empty">
-        No conversations yet.
+        Sin conversaciones aún.
       </p>
 
       <button
@@ -106,7 +106,7 @@ function getProviderIcon(provider: string): string {
         <span class="sidebar__conv-title">{{ conv.title }}</span>
         <button
           class="sidebar__conv-delete"
-          title="Delete"
+          title="Eliminar"
           @click="(e) => handleDeleteConversation(e, conv._id)"
         >
           <i class="fa-solid fa-trash-can"></i>
@@ -120,9 +120,9 @@ function getProviderIcon(provider: string): string {
         <div class="sidebar__user-avatar">
           <i class="fa-solid fa-user"></i>
         </div>
-        <span class="sidebar__user-email">{{ userStore.email || 'User' }}</span>
+        <span class="sidebar__user-email">{{ userStore.email || 'Usuario' }}</span>
       </div>
-      <button class="sidebar__logout" title="Logout" @click="handleLogout">
+      <button class="sidebar__logout" title="Cerrar Sesión" @click="handleLogout">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
     </div>

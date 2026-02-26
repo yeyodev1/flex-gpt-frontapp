@@ -2,16 +2,22 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    name: 'Landing',
+    component: () => import('../views/LandingView.vue'),
+    meta: { title: 'Bienvenido — FlexGPT' },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('../views/LoginView.vue'),
-    meta: { title: 'Login — FlexGPT' },
+    meta: { title: 'Acceder — FlexGPT' },
   },
   {
-    path: '/',
+    path: '/chat',
     name: 'Chat',
     component: () => import('../views/ChatView.vue'),
-    meta: { title: 'FlexGPT', requiresAuth: true },
+    meta: { title: 'Chat — FlexGPT', requiresAuth: true },
   },
 ]
 
@@ -36,8 +42,8 @@ router.beforeEach((to, _from, next) => {
     return next({ path: '/login', replace: true })
   }
 
-  if (to.path === '/login' && hasToken) {
-    return next({ path: '/', replace: true })
+  if ((to.path === '/login' || to.path === '/') && hasToken) {
+    return next({ path: '/chat', replace: true })
   }
 
   next()

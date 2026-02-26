@@ -33,6 +33,11 @@ const props = defineProps({
     required: false,
     default: 50,
   },
+  isLoading: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 })
 
 const emit = defineEmits<{
@@ -60,8 +65,11 @@ watch(() => props.streamingContent, scrollToBottom)
       <div class="empty-icon">
         <i class="fa-solid fa-comments"></i>
       </div>
-      <h3>Start a conversation</h3>
-      <p>Choose an AI model and send a message to begin.</p>
+      <p v-if="isLoading" class="sidebar__loading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Cargando...
+      </p>
+      <h3>Inicia una conversación</h3>
+      <p>Elige un modelo de IA y envía un mensaje para comenzar.</p>
     </div>
 
     <!-- Messages -->
@@ -109,8 +117,8 @@ watch(() => props.streamingContent, scrollToBottom)
       <div v-if="isNearLimit && !isLimitReached" class="limit-banner limit-banner--warning">
         <i class="fa-solid fa-triangle-exclamation"></i>
         <div class="limit-banner__text">
-          <strong>{{ messagesRemaining }} messages remaining.</strong>
-          <span>Consider starting a new chat soon to continue your conversation.</span>
+          <strong>Quedan {{ messagesRemaining }} mensajes.</strong>
+          <span>Considera iniciar un nuevo chat pronto para continuar la conversación.</span>
         </div>
       </div>
 
@@ -118,12 +126,12 @@ watch(() => props.streamingContent, scrollToBottom)
       <div v-if="isLimitReached" class="limit-banner limit-banner--error">
         <i class="fa-solid fa-circle-exclamation"></i>
         <div class="limit-banner__text">
-          <strong>Conversation limit reached.</strong>
-          <span>This chat has reached its maximum length. Please start a new conversation to continue.</span>
+          <strong>Límite de conversación alcanzado.</strong>
+          <span>Este chat ha alcanzado su longitud máxima. Por favor, inicia una nueva conversación para continuar.</span>
         </div>
         <button class="limit-banner__btn" @click="emit('new-chat')">
           <i class="fa-solid fa-plus"></i>
-          New Chat
+          Nuevo Chat
         </button>
       </div>
     </div>

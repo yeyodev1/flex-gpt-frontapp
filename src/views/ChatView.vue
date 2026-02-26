@@ -103,11 +103,9 @@ function handleRemoveFile(index: number) {
     <Transition name="fade">
       <div v-if="isDraggingGlobal" class="drag-overlay">
         <div class="drag-overlay__content">
-          <div class="drag-overlay__icon">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-          </div>
-          <h2 class="drag-overlay__title">Release to upload</h2>
-          <p class="drag-overlay__desc">Drop your files anywhere to add them to the chat</p>
+          <i class="fa-solid fa-cloud-arrow-up drag-overlay__icon"></i>
+          <h2 class="drag-overlay__title">Suelta para analizar</h2>
+          <p class="drag-overlay__desc">Analiza PDF, imágenes o archivos CSV de forma segura.</p>
         </div>
       </div>
     </Transition>
@@ -153,6 +151,7 @@ function handleRemoveFile(index: number) {
         :is-near-limit="conversationStore.isConversationNearLimit"
         :is-limit-reached="conversationStore.isConversationLimitReached"
         :messages-remaining="conversationStore.messagesRemaining"
+        :is-loading="conversationStore.isLoadingConversations"
         @new-chat="handleNewChat"
       />
 
@@ -173,7 +172,7 @@ function handleRemoveFile(index: number) {
       <ChatInputBar
         ref="inputBarRef"
         :disabled="conversationStore.isStreaming || conversationStore.isConversationLimitReached"
-        :placeholder="conversationStore.isConversationLimitReached ? 'Conversation limit reached' : 'Send a message...'"
+        :placeholder="conversationStore.isConversationLimitReached ? 'Límite alcanzado' : 'Escribe un mensaje...'"
         :selected-provider="conversationStore.selectedProvider"
         :pending-files="pendingFiles"
         @send="handleSendMessage"
@@ -233,7 +232,14 @@ function handleRemoveFile(index: number) {
       font-weight: 700;
       color: $white;
       letter-spacing: -0.02em;
-      background: linear-gradient(135deg, $white, rgba($white, 0.7));
+      // Original gradient
+      // background: linear-gradient(135deg, $white, rgba($white, 0.7));
+      // -webkit-background-clip: text;
+      // background-clip: text;
+      // -webkit-text-fill-color: transparent;
+
+      // New gradient
+      background: linear-gradient(to right, $primary, $secondary);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;

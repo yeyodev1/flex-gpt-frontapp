@@ -57,11 +57,6 @@ function getFileIcon(mimeType: string) {
   if (mimeType.includes('text')) return 'fa-solid fa-file-lines'
   return 'fa-solid fa-file'
 }
-
-function getFileSizeLabel() {
-  // Mock size since we don't have it in the message object yet
-  return 'Document'
-}
 </script>
 
 <template>
@@ -82,7 +77,7 @@ function getFileSizeLabel() {
             </div>
             <div class="file-card__info">
               <span class="file-card__name" :title="file.name">{{ file.name }}</span>
-              <span class="file-card__status">Document Sent <i class="fa-solid fa-check-double"></i></span>
+              <span class="file-card__status">Documento Enviado <i class="fa-solid fa-check-double"></i></span>
             </div>
           </div>
         </div>

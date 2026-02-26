@@ -16,7 +16,7 @@ const showPassword = ref(false)
 
 async function handleLogin() {
   if (!email.value || !password.value) {
-    errorMessage.value = 'Please enter email and password.'
+    errorMessage.value = 'Por favor, ingresa tu correo y contraseña.'
     return
   }
 
@@ -33,9 +33,9 @@ async function handleLogin() {
       email: data.user.email,
     })
 
-    router.push('/')
+    router.push('/chat')
   } catch (error: any) {
-    errorMessage.value = error?.message || 'Invalid credentials. Please try again.'
+    errorMessage.value = error?.message || 'Credenciales inválidas. Por favor, inténtalo de nuevo.'
   } finally {
     isLoading.value = false
   }
@@ -48,13 +48,13 @@ async function handleLogin() {
       <!-- Brand -->
       <div class="login-brand">
         <img :src="longLogo" alt="FlexGPT" class="brand-logo" />
-        <p class="brand-tagline">Enterprise AI Without the Price Tag</p>
+        <p class="brand-tagline">IA Corporativa sin complicaciones</p>
       </div>
 
       <!-- Login Card -->
       <form class="login-card" @submit.prevent="handleLogin">
-        <h2 class="card-title">Welcome back</h2>
-        <p class="card-subtitle">Sign in to continue to FlexGPT</p>
+        <h2 class="card-title">Bienvenido de nuevo</h2>
+        <p class="card-subtitle">Inicia sesión para continuar en FlexGPT</p>
 
         <!-- Error Message -->
         <div v-if="errorMessage" class="error-banner">
@@ -64,7 +64,7 @@ async function handleLogin() {
 
         <!-- Email Field -->
         <div class="input-group">
-          <label for="email">Email</label>
+          <label for="email">Correo Electrónico</label>
           <div class="input-wrapper">
             <i class="fa-solid fa-envelope"></i>
             <input
@@ -80,7 +80,7 @@ async function handleLogin() {
 
         <!-- Password Field -->
         <div class="input-group">
-          <label for="password">Password</label>
+          <label for="password">Contraseña</label>
           <div class="input-wrapper">
             <i class="fa-solid fa-lock"></i>
             <input
@@ -106,11 +106,11 @@ async function handleLogin() {
         <button type="submit" class="btn-login" :disabled="isLoading">
           <template v-if="isLoading">
             <i class="fa-solid fa-spinner fa-spin"></i>
-            Signing in...
+            Iniciando sesión...
           </template>
           <template v-else>
             <i class="fa-solid fa-right-to-bracket"></i>
-            Sign In
+            Iniciar Sesión
           </template>
         </button>
 
@@ -127,7 +127,7 @@ async function handleLogin() {
               <i class="fa-solid fa-magnifying-glass-chart"></i>
             </span>
           </div>
-          <p class="footer-text">Powered by Claude · Gemini · DeepSeek</p>
+          <p class="footer-text">Impulsado por Claude · Gemini · DeepSeek</p>
         </div>
       </form>
     </div>
@@ -231,7 +231,7 @@ async function handleLogin() {
   display: flex;
   align-items: center;
 
-  > i:first-child {
+  >i:first-child {
     position: absolute;
     left: $spacing-md;
     color: $text-secondary;

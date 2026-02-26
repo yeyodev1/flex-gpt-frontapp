@@ -4,9 +4,9 @@ import ProviderLogo from '@/components/ProviderLogo.vue'
 import type { AIProvider, ProviderStatus } from '@/types'
 
 const PROVIDERS: { id: AIProvider; label: string; description: string; colorVar: string }[] = [
-  { id: 'claude', label: 'Claude', description: 'AI Assistant', colorVar: '--claude' },
-  { id: 'gemini', label: 'Gemini', description: 'AI Assistant', colorVar: '--gemini' },
-  { id: 'deepseek', label: 'DeepSeek', description: 'AI Assistant', colorVar: '--deepseek' },
+  { id: 'claude', label: 'Claude', description: 'Asistente de IA', colorVar: '--claude' },
+  { id: 'gemini', label: 'Gemini', description: 'Asistente de IA', colorVar: '--gemini' },
+  { id: 'deepseek', label: 'DeepSeek', description: 'Asistente de IA', colorVar: '--deepseek' },
 ]
 
 const props = defineProps({
@@ -51,9 +51,9 @@ onMounted(() => document.addEventListener('click', handleClickOutside))
 onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 
 const dropdownTitle = computed(() => {
-  if (props.hasFiles) return 'Provider locked while files are attached'
-  if (props.disabled) return 'Model selection disabled'
-  return 'Select AI Model'
+  if (props.hasFiles) return 'Proveedor bloqueado mientras hay archivos adjuntos'
+  if (props.disabled) return 'Selección de modelo deshabilitada'
+  return 'Seleccionar Modelo de IA'
 })
 
 const selectedProviderObj = computed(() => PROVIDERS.find(p => p.id === props.selected))
@@ -66,11 +66,11 @@ function isProviderDisabled(providerId: AIProvider) {
 }
 
 function getTooltip(providerId: AIProvider): string {
-  if (props.hasFiles) return 'Provider locked while files are attached'
+  if (props.hasFiles) return 'Proveedor bloqueado mientras hay archivos adjuntos'
   if (!props.providerStatuses) return ''
   const status = props.providerStatuses[providerId]
   if (!status || status.available) return ''
-  return status.error || 'Unavailable'
+  return status.error || 'No disponible'
 }
 
 function handleSelect(providerId: AIProvider) {
@@ -97,7 +97,7 @@ function handleSelect(providerId: AIProvider) {
     >
       <div class="model-dropdown__trigger-content">
         <ProviderLogo :provider="selected" class="model-dropdown__logo" />
-        <span class="model-dropdown__name">{{ selectedProviderObj?.label || 'Select Model' }}</span>
+        <span class="model-dropdown__name">{{ selectedProviderObj?.label || 'Seleccionar Modelo' }}</span>
       </div>
       <i class="fa-solid fa-chevron-up model-dropdown__chevron"></i>
     </button>
@@ -105,7 +105,7 @@ function handleSelect(providerId: AIProvider) {
     <!-- Dropdown Menu -->
     <div v-show="isOpen" class="model-dropdown__menu">
       <div class="model-dropdown__header">
-        <span>Available Models</span>
+        <span>Modelos Disponibles</span>
         <i v-if="isChecking && !providerStatuses" class="fa-solid fa-spinner fa-spin model-dropdown__spinner"></i>
       </div>
 
