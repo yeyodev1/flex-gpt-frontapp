@@ -11,11 +11,56 @@ import type { AIProvider } from '@/types'
 const conversationStore = useConversationStore()
 const isSidebarOpen = ref(false)
 const pendingFiles = ref<File[]>([])
+const isDraggingGlobal = ref(false)
+let dragCounter = 0 // To prevent flickering on nested elements
 
 onMounted(() => {
   conversationStore.loadConversations()
   conversationStore.checkProvidersStatus()
+
+  // Global Drag & Drop listeners
+  window.addEventListener('dragenter', handleGlobalDragEnter)
+  window.addEventListener('dragleave', handleGlobalDragLeave)
+  window.addEventListener('dragover', handleGlobalDragOver)
+  window.addEventListener('drop', handleGlobalDrop)
 })
+
+function handleGlobalDragEnter(e: DragEvent) {
+  e.preventDefault()
+  dragCounter++
+  if (e.dataTransfer?.types.includes('Files')) {
+    isDraggingGlobal.value = true
+  }
+}
+
+function handleGlobalDragOver(e: DragEvent) {
+  e.preventDefault() // Required to allow drop
+}
+
+function handleGlobalDragLeave(e: DragEvent) {
+  e.preventDefault()
+  dragCounter--
+  if (dragCounter <= 0) {
+    isDraggingGlobal.value = false
+  }
+}
+
+function handleGlobalDrop(e: DragEvent) {
+  e.preventDefault()
+  isDraggingGlobal.value = false
+  dragCounter = 0
+
+  const files = e.dataTransfer?.files
+  if (files && files.length > 0) {
+    const validTypes = ['.pdf', '.png', '.jpg', '.jpeg', '.csv', '.txt']
+    Array.from(files).forEach(file => {
+      const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase()
+      if (validTypes.includes(extension) || file.type.startsWith('image/')) {
+        handleFileUpload(file)
+      }
+    })
+  }
+}
 
 function handleProviderSelect(provider: AIProvider) {
   // Can only change provider if the conversation doesn't have files
@@ -30,7 +75,6 @@ function handleSendMessage(message: string) {
 
 function handleNewChat() {
   conversationStore.startNewChat()
-  pendingFiles.value = []
 }
 
 function handleFileUpload(file: File) {
@@ -45,6 +89,19 @@ function handleRemoveFile(index: number) {
 
 <template>
   <div class="chat-layout">
+    <!-- Global Drag & Drop Overlay -->
+    <Transition name="fade">
+      <div v-if="isDraggingGlobal" class="drag-overlay">
+        <div class="drag-overlay__content">
+          <div class="drag-overlay__icon">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <h2 class="drag-overlay__title">Release to upload</h2>
+          <p class="drag-overlay__desc">Drop your files anywhere to add them to the chat</p>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Sidebar -->
     <ChatSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
 
@@ -95,6 +152,7 @@ function handleRemoveFile(index: number) {
         <ModelSelector
           :selected="conversationStore.selectedProvider"
           :disabled="conversationStore.isStreaming || pendingFiles.length > 0"
+          :has-files="pendingFiles.length > 0"
           :provider-statuses="conversationStore.providersStatus"
           :is-checking="conversationStore.isCheckingProviders"
           @select="handleProviderSelect"
@@ -264,5 +322,76 @@ function handleRemoveFile(index: number) {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+// Global Drag Overlay
+.drag-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($primary-dark, 0.85);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; // Let events pass to the window
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-lg;
+    color: $white;
+    animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &__icon {
+    width: 120px;
+    height: 120px;
+    background: rgba($primary, 0.1);
+    border: 2px dashed rgba($primary, 0.5);
+    border-radius: $radius-2xl;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: $primary;
+    box-shadow: 0 0 50px rgba($primary, 0.2);
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &__desc {
+    font-size: 1.125rem;
+    color: $text-secondary;
+    max-width: 300px;
+    text-align: center;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

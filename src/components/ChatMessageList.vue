@@ -180,8 +180,19 @@ watch(() => props.streamingContent, scrollToBottom)
 }
 
 .message {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &--user {
+    align-self: flex-end;
+    align-items: flex-end;
+    margin-left: 20%;
+  }
+
   &--assistant {
     align-self: flex-start;
+    align-items: flex-start;
     margin-right: 20%;
   }
 

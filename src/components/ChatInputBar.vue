@@ -31,6 +31,7 @@ const emit = defineEmits<{
 }>()
 
 const inputText = ref('')
+const isDragging = ref(false)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
@@ -68,11 +69,47 @@ function triggerFileUpload() {
 
 function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) {
-    emit('upload-file', file)
+  const files = target.files
+  if (files) {
+    Array.from(files).forEach(file => {
+      emit('upload-file', file)
+    })
     // Reset input so the same file can be selected again
     target.value = ''
+  }
+}
+
+function handleDragEnter(e: DragEvent) {
+  e.preventDefault()
+  if (props.disabled) return
+  isDragging.value = true
+}
+
+function handleDragOver(e: DragEvent) {
+  e.preventDefault()
+  if (props.disabled) return
+  isDragging.value = true
+}
+
+function handleDragLeave(e: DragEvent) {
+  e.preventDefault()
+  isDragging.value = false
+}
+
+function handleDrop(e: DragEvent) {
+  e.preventDefault()
+  isDragging.value = false
+  if (props.disabled) return
+
+  const files = e.dataTransfer?.files
+  if (files) {
+    const validTypes = ['.pdf', '.png', '.jpg', '.jpeg', '.csv', '.txt']
+    Array.from(files).forEach(file => {
+      const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase()
+      if (validTypes.includes(extension) || file.type.startsWith('image/')) {
+        emit('upload-file', file)
+      }
+    })
   }
 }
 </script>
@@ -92,7 +129,14 @@ function handleFileChange(event: Event) {
       </div>
     </div>
 
-    <div class="input-bar__wrapper">
+    <div 
+      class="input-bar__wrapper"
+      :class="{ 'input-bar__wrapper--dragging': isDragging }"
+      @dragenter="handleDragEnter"
+      @dragover="handleDragOver"
+      @dragleave="handleDragLeave"
+      @drop="handleDrop"
+    >
       <!-- Left Actions: Upload + Model Selector -->
       <div class="input-bar__left-actions">
         <button 
@@ -157,10 +201,18 @@ function handleFileChange(event: Event) {
     background: $surface;
     border: 1px solid $glass-border;
     border-radius: $radius-xl;
-    transition: border-color $transition-fast;
+    transition: all $transition-fast;
 
     &:focus-within {
       border-color: rgba($primary, 0.5);
+      background: rgba($white, 0.03);
+    }
+
+    &--dragging {
+      border-color: $primary;
+      background: rgba($primary, 0.1);
+      border-style: dashed;
+      transform: scale(1.01);
     }
   }
 

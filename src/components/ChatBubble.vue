@@ -80,17 +80,17 @@ const renderedContent = computed(() => {
 .bubble {
   display: flex;
   gap: $spacing-sm;
-  padding: $spacing-sm 0;
-  max-width: 85%;
+  padding: $spacing-xs 0;
+  max-width: 90%;
   animation: fadeIn 200ms ease;
 
   &--user {
-    align-self: flex-end;
     flex-direction: row;
+    justify-content: flex-end;
   }
 
   &--assistant {
-    align-self: flex-start;
+    justify-content: flex-start;
   }
 
   &__avatar {
@@ -129,7 +129,6 @@ const renderedContent = computed(() => {
   }
 
   &__body {
-    flex: 1;
     min-width: 0;
   }
 
@@ -159,6 +158,7 @@ const renderedContent = computed(() => {
 
     // Markdown styles for assistant responses
     &--markdown {
+
       :deep(h1),
       :deep(h2),
       :deep(h3),
@@ -172,9 +172,17 @@ const renderedContent = computed(() => {
         }
       }
 
-      :deep(h1) { font-size: 1.25rem; }
-      :deep(h2) { font-size: 1.125rem; }
-      :deep(h3) { font-size: 1rem; }
+      :deep(h1) {
+        font-size: 1.25rem;
+      }
+
+      :deep(h2) {
+        font-size: 1.125rem;
+      }
+
+      :deep(h3) {
+        font-size: 1rem;
+      }
 
       :deep(p) {
         margin: 0 0 $spacing-sm;
@@ -268,7 +276,8 @@ const renderedContent = computed(() => {
         margin: $spacing-sm 0;
         font-size: 0.875rem;
 
-        th, td {
+        th,
+        td {
           padding: $spacing-xs $spacing-sm;
           border: 1px solid $glass-border;
           text-align: left;
@@ -295,12 +304,27 @@ const renderedContent = computed(() => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 </style>

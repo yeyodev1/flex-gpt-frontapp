@@ -27,6 +27,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hasFiles: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 })
 
 const emit = defineEmits<{
@@ -45,16 +50,23 @@ function handleClickOutside(event: MouseEvent) {
 onMounted(() => document.addEventListener('click', handleClickOutside))
 onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 
+const dropdownTitle = computed(() => {
+  if (props.hasFiles) return 'Provider locked while files are attached'
+  if (props.disabled) return 'Model selection disabled'
+  return 'Select AI Model'
+})
+
 const selectedProviderObj = computed(() => PROVIDERS.find(p => p.id === props.selected))
 
 function isProviderDisabled(providerId: AIProvider) {
-  if (props.disabled) return true
+  if (props.disabled || props.hasFiles) return true
   // If we don't have statuses yet, or the specific provider is missing, default to available
   if (!props.providerStatuses || !props.providerStatuses[providerId]) return false
   return props.providerStatuses[providerId].available === false
 }
 
 function getTooltip(providerId: AIProvider): string {
+  if (props.hasFiles) return 'Provider locked while files are attached'
   if (!props.providerStatuses) return ''
   const status = props.providerStatuses[providerId]
   if (!status || status.available) return ''
@@ -73,9 +85,14 @@ function handleSelect(providerId: AIProvider) {
     <!-- Trigger Button -->
     <button 
       class="model-dropdown__trigger" 
-      :class="{ 'model-dropdown__trigger--open': isOpen, 'model-dropdown__trigger--disabled': disabled }"
+      :class="{
+        'model-dropdown__trigger--open': isOpen,
+        'model-dropdown__trigger--disabled': disabled,
+        'model-dropdown__trigger--locked': hasFiles
+      }"
       @click="isOpen = !isOpen" 
-      :disabled="disabled"
+      :disabled="disabled || hasFiles"
+      :title="dropdownTitle"
       type="button"
     >
       <div class="model-dropdown__trigger-content">
@@ -156,6 +173,13 @@ function handleSelect(providerId: AIProvider) {
     &--open {
       background: $surface;
       border-color: rgba($primary, 0.5);
+    }
+
+    &--locked {
+      cursor: help;
+      opacity: 0.8;
+      background: rgba($white, 0.03);
+      border-color: rgba($primary, 0.2);
     }
 
     &--disabled {
