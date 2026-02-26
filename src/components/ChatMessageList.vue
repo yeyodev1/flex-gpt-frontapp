@@ -66,13 +66,22 @@ watch(() => props.streamingContent, scrollToBottom)
 
     <!-- Messages -->
     <div v-else class="message-list__messages">
-      <ChatBubble
-        v-for="(msg, index) in messages"
-        :key="index"
-        :role="msg.role"
-        :content="msg.content"
-        :provider="msg.provider"
-      />
+      <div 
+        v-for="(msg, index) in messages" 
+        :key="index" 
+        class="message"
+        :class="{
+          'message--user': msg.role === 'user',
+          'message--assistant': msg.role === 'assistant',
+          'message--error': msg.isError
+        }"
+      >
+        <ChatBubble
+          :role="msg.role"
+          :content="msg.content"
+          :provider="msg.provider"
+        />
+      </div>
 
       <!-- Streaming Bubble -->
       <ChatBubble
@@ -170,6 +179,26 @@ watch(() => props.streamingContent, scrollToBottom)
   }
 }
 
+.message {
+  &--assistant {
+    align-self: flex-start;
+    margin-right: 20%;
+  }
+
+  &--error {
+    // These styles are applied to the wrapper div,
+    // and then propagated to the ChatBubble content via ::v-deep
+    background: rgba($alert-error, 0.1) !important;
+    border: 1px solid rgba($alert-error, 0.3) !important;
+    color: $alert-error !important;
+
+    // Target the paragraph inside ChatBubble
+    &::v-deep(.chat-bubble__content p) {
+      color: $alert-error !important;
+    }
+  }
+}
+
 // Limit banners
 .limit-banner {
   display: flex;
@@ -180,7 +209,7 @@ watch(() => props.streamingContent, scrollToBottom)
   margin-top: $spacing-md;
   animation: fadeIn 300ms ease;
 
-  > i {
+  >i {
     font-size: 1.125rem;
     flex-shrink: 0;
   }
@@ -277,19 +306,41 @@ watch(() => props.streamingContent, scrollToBottom)
       background: $text-secondary;
       animation: typingBounce 1.4s ease-in-out infinite;
 
-      &:nth-child(2) { animation-delay: 0.2s; }
-      &:nth-child(3) { animation-delay: 0.4s; }
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      &:nth-child(3) {
+        animation-delay: 0.4s;
+      }
     }
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes typingBounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-6px); opacity: 1; }
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
 }
 </style>

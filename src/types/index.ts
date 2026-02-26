@@ -17,7 +17,9 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   provider?: AIProvider;
+  files?: { path: string; name: string; mimeType: string }[];
   createdAt: string;
+  isError?: boolean;
 }
 
 export interface Conversation {

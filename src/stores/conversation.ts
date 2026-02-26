@@ -97,14 +97,16 @@ export const useConversationStore = defineStore('conversation', () => {
     streamingContent.value = ''
   }
 
-  async function sendMessage(content: string) {
-    if (isStreaming.value || !content.trim()) return
+  async function sendMessage(content: string, files?: File[]) {
+    // Only block if there's no content AND no files
+    if (isStreaming.value || (!content.trim() && (!files || files.length === 0))) return
 
     // Add user message to UI immediately
     const userMessage: Message = {
       role: 'user',
       content: content.trim(),
       createdAt: new Date().toISOString(),
+      // We could add file metadata here for UI if we wanted
     }
     messages.value.push(userMessage)
 
@@ -116,6 +118,7 @@ export const useConversationStore = defineStore('conversation', () => {
         selectedProvider.value,
         content.trim(),
         activeConversationId.value,
+        files,
         {
           onMeta: (conversationId: string) => {
             activeConversationId.value = conversationId
@@ -141,10 +144,21 @@ export const useConversationStore = defineStore('conversation', () => {
           onError: (error: string) => {
             console.error('Stream error:', error)
 
-            // Remove the optimistic user message if it errored before streaming
-            if (!streamingContent.value) {
-              messages.value.pop()
+            // Add a system error message instead of removing user message
+            const errorMessage: Message = {
+              role: 'assistant',
+              content: `⚠️ **Error:** ${error}. There seems to be an "interference" with this provider. Switching you to a more stable one...`,
+              provider: selectedProvider.value,
+              createdAt: new Date().toISOString(),
+              isError: true,
             }
+            messages.value.push(errorMessage)
+
+            // Auto-fallback logic: switch to Gemini if Claude/DeepSeek fails, or vice-versa
+            const current = selectedProvider.value
+            if (current === 'claude') setProvider('gemini')
+            else if (current === 'deepseek') setProvider('gemini')
+            else setProvider('claude')
 
             streamingContent.value = ''
             isStreaming.value = false

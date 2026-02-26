@@ -36,6 +36,7 @@ class ChatService extends APIBase {
     provider: string,
     message: string,
     conversationId: string | null,
+    files: File[] | undefined,
     callbacks: {
       onMeta: (conversationId: string) => void;
       onChunk: (text: string) => void;
@@ -48,18 +49,32 @@ class ChatService extends APIBase {
     const url = `${baseUrl.replace(/\/+$/, "")}/chat/send`;
 
     const token = localStorage.getItem("access_token");
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
+    let body: BodyInit;
+
+    if (files && files.length > 0) {
+      const formData = new FormData();
+      formData.append("provider", provider);
+      formData.append("message", message);
+      if (conversationId) formData.append("conversationId", conversationId);
+      files.forEach(f => formData.append("files", f));
+      body = formData;
+      // Note: When using FormData, let the browser set the Content-Type header with the boundary.
+    } else {
+      headers["Content-Type"] = "application/json";
+      body = JSON.stringify({
         provider,
         message,
         ...(conversationId ? { conversationId } : {}),
-      }),
+      });
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body,
     });
 
     if (!response.ok) {
