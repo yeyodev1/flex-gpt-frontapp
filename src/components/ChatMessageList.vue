@@ -80,6 +80,7 @@ watch(() => props.streamingContent, scrollToBottom)
           :role="msg.role"
           :content="msg.content"
           :provider="msg.provider"
+          :files="msg.files"
         />
       </div>
 

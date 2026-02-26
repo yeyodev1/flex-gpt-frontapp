@@ -26,6 +26,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  files: {
+    type: Array as () => { path: string; name: string; mimeType: string }[],
+    required: false,
+    default: () => [],
+  },
 })
 
 const providerIcon = computed(() => {
@@ -44,6 +49,19 @@ const renderedContent = computed(() => {
   if (props.role === 'user') return null
   return marked.parse(props.content) as string
 })
+
+function getFileIcon(mimeType: string) {
+  if (mimeType.includes('pdf')) return 'fa-solid fa-file-pdf'
+  if (mimeType.includes('image')) return 'fa-solid fa-file-image'
+  if (mimeType.includes('csv')) return 'fa-solid fa-file-csv'
+  if (mimeType.includes('text')) return 'fa-solid fa-file-lines'
+  return 'fa-solid fa-file'
+}
+
+function getFileSizeLabel() {
+  // Mock size since we don't have it in the message object yet
+  return 'Document'
+}
 </script>
 
 <template>
@@ -56,7 +74,19 @@ const renderedContent = computed(() => {
     <div class="bubble__body">
       <!-- User message: plain text -->
       <div v-if="role === 'user'" class="bubble__content">
-        <p>{{ content }}</p>
+        <!-- Files Area -->
+        <div v-if="files && files.length > 0" class="bubble__files">
+          <div v-for="(file, index) in files" :key="index" class="file-card">
+            <div class="file-card__icon">
+              <i :class="getFileIcon(file.mimeType)"></i>
+            </div>
+            <div class="file-card__info">
+              <span class="file-card__name" :title="file.name">{{ file.name }}</span>
+              <span class="file-card__status">Document Sent <i class="fa-solid fa-check-double"></i></span>
+            </div>
+          </div>
+        </div>
+        <p v-if="content">{{ content }}</p>
       </div>
 
       <!-- Assistant message: rendered markdown -->
@@ -300,6 +330,78 @@ const renderedContent = computed(() => {
     margin-left: 2px;
     vertical-align: text-bottom;
     animation: blink 0.8s ease-in-out infinite;
+  }
+
+  &__files {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+// Professional File Card
+.file-card {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($white, 0.05);
+  border: 1px solid rgba($white, 0.1);
+  border-radius: $radius-md;
+  width: 100%;
+  min-width: 240px;
+  max-width: 320px;
+  transition: all $transition-fast;
+  cursor: default;
+
+  &:hover {
+    background: rgba($white, 0.08);
+    border-color: rgba($primary, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    background: rgba($primary, 0.15);
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: $primary;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    color: $white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__status {
+    color: rgba($white, 0.5);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    i {
+      font-size: 0.625rem;
+      color: $secondary;
+    }
   }
 }
 

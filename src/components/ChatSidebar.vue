@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useConversationStore } from '@/stores/conversation'
+import { useUIStore } from '@/stores/ui'
 import type { ConversationListItem } from '@/types'
 import longLogo from '@/assets/logo/long-logo.png'
 
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 const router = useRouter()
 const userStore = useUserStore()
 const conversationStore = useConversationStore()
+const uiStore = useUIStore()
 
 function handleNewChat() {
   conversationStore.startNewChat()
@@ -32,7 +34,21 @@ function handleSelectConversation(conversation: ConversationListItem) {
 
 function handleDeleteConversation(event: Event, id: string) {
   event.stopPropagation()
-  conversationStore.deleteConversation(id)
+
+  uiStore.openModal({
+    title: 'Delete Conversation',
+    message: 'Are you sure you want to delete this conversation? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    onConfirm: async () => {
+      try {
+        await conversationStore.deleteConversation(id)
+        uiStore.showToast('Conversation deleted successfully', 'success')
+      } catch (error) {
+        uiStore.showToast('Failed to delete conversation', 'error')
+      }
+    }
+  })
 }
 
 function handleLogout() {
@@ -218,7 +234,8 @@ function getProviderIcon(provider: string): string {
     padding: 0 $spacing-sm;
   }
 
-  &__loading, &__empty {
+  &__loading,
+  &__empty {
     text-align: center;
     color: $text-secondary;
     font-size: 0.8125rem;

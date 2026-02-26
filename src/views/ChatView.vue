@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { useConversationStore } from '@/stores/conversation'
 import ChatSidebar from '@/components/ChatSidebar.vue'
 import ChatMessageList from '@/components/ChatMessageList.vue'
@@ -12,6 +12,7 @@ const conversationStore = useConversationStore()
 const isSidebarOpen = ref(false)
 const pendingFiles = ref<File[]>([])
 const isDraggingGlobal = ref(false)
+const inputBarRef = ref<any>(null)
 let dragCounter = 0 // To prevent flickering on nested elements
 
 onMounted(() => {
@@ -61,6 +62,15 @@ function handleGlobalDrop(e: DragEvent) {
     })
   }
 }
+
+// Auto-focus when streaming ends
+watch(() => conversationStore.isStreaming, (isStreamingNow: boolean) => {
+  if (!isStreamingNow) {
+    nextTick(() => {
+      inputBarRef.value?.focus()
+    })
+  }
+})
 
 function handleProviderSelect(provider: AIProvider) {
   // Can only change provider if the conversation doesn't have files
@@ -161,6 +171,7 @@ function handleRemoveFile(index: number) {
 
       <!-- Input -->
       <ChatInputBar
+        ref="inputBarRef"
         :disabled="conversationStore.isStreaming || conversationStore.isConversationLimitReached"
         :placeholder="conversationStore.isConversationLimitReached ? 'Conversation limit reached' : 'Send a message...'"
         :selected-provider="conversationStore.selectedProvider"

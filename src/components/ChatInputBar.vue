@@ -42,13 +42,22 @@ function handleSend() {
 
   emit('send', trimmed)
   inputText.value = ''
-  // Reset textarea height
+  // Reset textarea height and refocus
   nextTick(() => {
     if (textareaRef.value) {
       textareaRef.value.style.height = 'auto'
+      textareaRef.value.focus()
     }
   })
 }
+
+function focus() {
+  textareaRef.value?.focus()
+}
+
+defineExpose({
+  focus
+})
 
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.shiftKey) {

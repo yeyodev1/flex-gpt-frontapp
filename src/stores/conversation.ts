@@ -106,7 +106,11 @@ export const useConversationStore = defineStore('conversation', () => {
       role: 'user',
       content: content.trim(),
       createdAt: new Date().toISOString(),
-      // We could add file metadata here for UI if we wanted
+      files: files ? files.map(f => ({
+        path: '', // Local files don't have a path yet
+        name: f.name,
+        mimeType: f.type
+      })) : undefined
     }
     messages.value.push(userMessage)
 
