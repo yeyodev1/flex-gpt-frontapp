@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from 'vue'
 import { useConversationStore } from '@/stores/conversation'
+import { useUIStore } from '@/stores/ui'
 import ChatSidebar from '@/components/ChatSidebar.vue'
 import ChatMessageList from '@/components/ChatMessageList.vue'
 import ChatInputBar from '@/components/ChatInputBar.vue'
@@ -9,6 +10,7 @@ import ProviderLogo from '@/components/ProviderLogo.vue'
 import type { AIProvider } from '@/types'
 
 const conversationStore = useConversationStore()
+const uiStore = useUIStore()
 const isSidebarOpen = ref(false)
 const pendingFiles = ref<File[]>([])
 const isDraggingGlobal = ref(false)
@@ -87,9 +89,13 @@ function handleNewChat() {
   conversationStore.startNewChat()
 }
 
-function handleFileUpload(file: File) {
-  // For now, support only 1 file maybe? Or support multiple. Let's support multiple visually, but limit later if needed.
-  pendingFiles.value.push(file)
+function handleFileUpload(_file: File) {
+  uiStore.openModal({
+    title: 'Versión de Prueba',
+    message: 'Por esta versión de prueba no está desbloqueada la ingesta de archivos.',
+    confirmText: 'Entendido',
+    onConfirm: () => { }
+  })
 }
 
 function handleRemoveFile(index: number) {
